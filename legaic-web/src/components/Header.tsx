@@ -1,71 +1,64 @@
 // src/components/Header.tsx
 
 import Link from 'next/link'
-import React from 'react'
 
-// Definimos nuestros enlaces de navegación
 const navLinks = [
   { name: 'Inicio', href: '/' },
-  { name: 'Áreas de Práctica', href: '/' }, // Lo enlazamos a la Home por ahora
+  { name: 'Áreas de Práctica', href: '/#areas-de-practica' },
   { name: 'Quiénes Somos', href: '/quienes-somos' },
   { name: 'Noticias', href: '/noticias' },
-  { name: 'Contacto', href: '/contacto' }, // Crearemos esta página después
+  { name: 'Contacto', href: '/contacto' },
 ]
 
 export default function Header() {
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <nav className="container mx-auto px-4 lg:px-6 py-4 flex justify-between items-center">
-        
-        {/* --- 1. Logo (placeholder) --- */}
-        <Link href="/" className="text-2xl font-bold text-gray-800">
-          LEGAIC
+    <header className="sticky top-0 z-50 bg-brand-night/95 text-white shadow-lg backdrop-blur">
+      <nav className="container flex items-center justify-between py-4">
+        <Link
+          href="/"
+          className="text-2xl font-semibold tracking-[0.2em] uppercase text-white transition-transform hover:-translate-y-0.5"
+        >
+          Legaic
         </Link>
 
-        {/* --- 2. Enlaces de Navegación (Desktop) --- */}
-        <div className="hidden lg:flex space-x-8">
+        <div className="hidden items-center space-x-8 lg:flex">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
-              className="text-gray-600 hover:text-blue-700 font-medium transition-colors"
+              className="text-sm font-medium uppercase tracking-[0.18em] text-white/80 transition-colors duration-300 hover:text-white"
             >
               {link.name}
             </Link>
           ))}
         </div>
 
-        {/* --- 3. Botón de "Consúltanos" (Desktop) --- */}
         <div className="hidden lg:block">
           <Link
             href="/contacto"
-            className="bg-blue-800 text-white px-5 py-2.5 rounded-md text-sm font-medium hover:bg-blue-900 transition-colors"
+            className="inline-flex items-center rounded-full bg-brand-accent px-5 py-2 text-sm font-semibold uppercase tracking-[0.2em] text-brand-night transition-colors duration-300 hover:bg-brand-accentDark hover:text-white"
           >
             Consúltenos
           </Link>
         </div>
 
-        {/* --- 4. Botón de Menú (Móvil) --- */}
-        {/* (La lógica para abrir/cerrar el menú la añadiremos después) */}
         <div className="lg:hidden">
-          <button className="text-gray-700 p-2">
+          <button
+            type="button"
+            className="inline-flex rounded-md bg-white/10 p-2 text-white transition hover:bg-white/20"
+            aria-label="Abrir menú de navegación"
+          >
             <svg
-              className="w-6 h-6"
+              className="h-6 w-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
           </button>
         </div>
-
       </nav>
     </header>
   )

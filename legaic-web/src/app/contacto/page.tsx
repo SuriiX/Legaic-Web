@@ -1,125 +1,113 @@
 // src/app/contacto/page.tsx
 
-import React from 'react'
-
 export default function ContactoPage() {
   return (
-    <main className="bg-white py-16 md:py-24">
-      <div className="container mx-auto px-4 max-w-5xl">
-        
-        {/* --- Encabezado --- */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4">
-            Contacta con Nosotros
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Estamos aquí para ayudarte. Envíanos tu consulta o visítanos en nuestra oficina en Barcelona.
+    <main className="bg-gradient-to-b from-white via-brand-cloud to-brand-mist py-16 md:py-24">
+      <div className="container max-w-5xl">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="badge-accent">Estamos a tu lado</span>
+          <h1 className="mt-6 text-4xl font-semibold md:text-5xl">Contacta con nuestro despacho</h1>
+          <p className="mt-4 text-base text-brand-slate/80">
+            Resolvemos tus consultas con la cercanía y agilidad que nos caracteriza. Déjanos tus datos y te responderemos en la mayor brevedad.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-
-          {/* --- Columna 1: Formulario (Diseño) --- */}
-          {/* Nota: Este es solo el diseño HTML. Para que funcione, 
-            necesitaría 'React Hook Form' y una API Route para enviar el email.
-            Por ahora, es un prototipo visual.
-          */}
-          <div className="bg-gray-50 p-8 rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">Envíanos tu Consulta</h2>
-            
-            <form action="#" method="POST" className="space-y-6">
+        <div className="mt-16 grid grid-cols-1 gap-12 md:grid-cols-[1.1fr_0.9fr]">
+          <div className="card-surface">
+            <div className="border-b border-brand-mist/60 px-8 pb-6 pt-8">
+              <h2 className="text-2xl font-semibold text-brand-navy">Envíanos tu consulta</h2>
+              <p className="mt-2 text-sm text-brand-slate/70">Formulario de contacto disponible próximamente.</p>
+            </div>
+            <form action="#" method="POST" className="space-y-6 px-8 py-8">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nombre</label>
+                <label htmlFor="name" className="block text-sm font-semibold uppercase tracking-[0.25em] text-brand-slate/70">
+                  Nombre
+                </label>
                 <input
                   type="text"
                   name="name"
                   id="name"
                   required
-                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-2 w-full rounded-xl border border-brand-mist bg-white px-4 py-3 text-sm shadow-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
                 />
               </div>
-              
+
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                <label htmlFor="email" className="block text-sm font-semibold uppercase tracking-[0.25em] text-brand-slate/70">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"
                   id="email"
                   required
-                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-2 w-full rounded-xl border border-brand-mist bg-white px-4 py-3 text-sm shadow-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
                 />
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Teléfono (Opcional)</label>
+                <label htmlFor="phone" className="block text-sm font-semibold uppercase tracking-[0.25em] text-brand-slate/70">
+                  Teléfono (opcional)
+                </label>
                 <input
                   type="tel"
                   name="phone"
                   id="phone"
-                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="mt-2 w-full rounded-xl border border-brand-mist bg-white px-4 py-3 text-sm shadow-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
                 />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700">Mensaje</label>
+                <label htmlFor="message" className="block text-sm font-semibold uppercase tracking-[0.25em] text-brand-slate/70">
+                  Mensaje
+                </label>
                 <textarea
                   name="message"
                   id="message"
-                  required
                   rows={5}
-                  className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  required
+                  className="mt-2 w-full rounded-xl border border-brand-mist bg-white px-4 py-3 text-sm shadow-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
                 ></textarea>
               </div>
 
-              <div>
-                <button
-                  type="submit"
-                  className="w-full bg-blue-800 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-blue-900 transition-colors disabled:bg-gray-400"
-                  // Deshabilitamos el botón por ahora
-                  disabled 
-                >
-                  Enviar Mensaje (Próximamente)
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="w-full cursor-not-allowed rounded-full bg-brand-accent px-6 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-brand-night opacity-60"
+                disabled
+              >
+                Enviar mensaje (próximamente)
+              </button>
             </form>
           </div>
 
-          {/* --- Columna 2: Información de Contacto --- */}
-          <div className="space-y-8">
+          <div className="card-surface flex flex-col gap-8 p-8">
             <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">Nuestra Oficina</h3>
-              <p className="text-gray-600">
-                Dirección de Ejemplo,
-                <br />
-                08001 Barcelona, España
+              <h3 className="text-xl font-semibold text-brand-navy">Nuestra oficina</h3>
+              <p className="mt-3 text-sm text-brand-slate/80">
+                Dirección de ejemplo
+                <br />08001 Barcelona, España
               </p>
             </div>
-            
             <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">Email</h3>
-              <a href="mailto:info@legaic.es" className="text-lg text-blue-700 hover:underline">
+              <h3 className="text-xl font-semibold text-brand-navy">Email</h3>
+              <a href="mailto:info@legaic.es" className="mt-2 inline-flex text-sm font-semibold text-brand-primary hover:text-brand-accent">
                 info@legaic.es
               </a>
             </div>
-
             <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">Teléfono</h3>
-              <a href="tel:+34000000000" className="text-lg text-blue-700 hover:underline">
+              <h3 className="text-xl font-semibold text-brand-navy">Teléfono</h3>
+              <a href="tel:+34000000000" className="mt-2 inline-flex text-sm font-semibold text-brand-primary hover:text-brand-accent">
                 +34 (000) 000 000
               </a>
             </div>
-
             <div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">Horario</h3>
-              <p className="text-gray-600">
-                Lunes a Jueves: 9:00 - 18:00
-                <br />
-                Viernes: 9:00 - 15:00
+              <h3 className="text-xl font-semibold text-brand-navy">Horario</h3>
+              <p className="mt-3 text-sm text-brand-slate/80">
+                Lunes a jueves: 9:00 - 18:00
+                <br />Viernes: 9:00 - 15:00
               </p>
             </div>
-
           </div>
-
         </div>
       </div>
     </main>
