@@ -1,3 +1,59 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    background-color: theme('colors.brand.cloud');
+  }
+
+  body {
+    @apply bg-brand-cloud text-brand-slate antialiased; 
+    background-image: radial-gradient(circle at top left, rgba(200, 161, 86, 0.08), transparent 45%),
+      radial-gradient(circle at bottom right, rgba(10, 34, 59, 0.12), transparent 50%);
+  }
+
+  ::selection {
+    @apply bg-brand-accent text-white;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-brand-navy font-semibold;
+  }
+}
+
+@layer components {
+  .card-surface {
+    @apply bg-white shadow-brand-card rounded-2xl border border-white/40 transition-all duration-500 hover:-translate-y-1 hover:shadow-brand-soft;
+  }
+
+  .badge-accent {
+    @apply inline-flex items-center rounded-full bg-brand-accent/10 px-3 py-1 text-sm font-medium text-brand-accent;
+  }
+}
+
+@layer utilities {
+  .mask-angled {
+    -webkit-mask-image: linear-gradient(135deg, #000 65%, transparent 100%);
+    mask-image: linear-gradient(135deg, #000 65%, transparent 100%);
+  }
+}
+
+.prose {
+  @apply text-brand-slate;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  @apply text-brand-navy;
+}
+
+.prose a {
+  @apply text-brand-primary underline decoration-brand-accent/40 transition-colors hover:text-brand-accent;
+}
+
+.prose strong {
+  @apply text-brand-navy;
+}

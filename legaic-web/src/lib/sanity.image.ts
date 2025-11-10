@@ -1,12 +1,12 @@
 
 
 import imageUrlBuilder from '@sanity/image-url'
-import { client } from './sanity.client' // Importa tu cliente
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
 
-// Configura el constructor de URLs de imagen
+import { client } from './sanity.client'
+
 const builder = imageUrlBuilder(client)
 
-// Exporta la función para poder usarla en cualquier parte
-export function urlFor(source: any) {
+export function urlFor(source: SanityImageSource) {
   return builder.image(source)
 }

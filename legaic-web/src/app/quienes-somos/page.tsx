@@ -1,13 +1,13 @@
 // src/app/quienes-somos/page.tsx
 
-// Eliminamos 'import React' que ya no es necesario para los estilos
-import { client } from '@/lib/sanity.client'
-import { groq } from 'next-sanity'
-import Image from 'next/image'
 import Link from 'next/link'
+import Image from 'next/image'
+import { groq } from 'next-sanity'
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
+
+import { client } from '@/lib/sanity.client'
 import { urlFor } from '@/lib/sanity.image'
 
-// --- Consulta GROQ (sin cambios) ---
 const query = groq`*[_type == "abogado"]{
   _id,
   name,
@@ -16,70 +16,71 @@ const query = groq`*[_type == "abogado"]{
   "slug": slug.current
 }`
 
-// --- Definición de Tipos (sin cambios) ---
 interface Abogado {
   _id: string
   name: string
   slug: string
   position?: string
-  profileImage?: any
+  profileImage?: SanityImageSource | null
 }
 
-// --- Función para Obtener Datos (sin cambios) ---
 async function getAbogados() {
   const abogados = await client.fetch(query)
   return abogados as Abogado[]
 }
 
-// --- Componente de la Página (Actualizado con Tailwind) ---
 export default async function QuienesSomosPage() {
   const abogados = await getAbogados()
 
   return (
-    <main className="container mx-auto px-4 py-12 md:py-20 max-w-6xl">
-      <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4 text-center">
-        Nuestro Equipo
-      </h1>
-      <p className="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-12">
-        Conoce al equipo de Legaic Abogados.
-      </p>
+    <main className="container py-16 md:py-24">
+      <div className="mx-auto max-w-3xl text-center">
+        <span className="badge-accent">Nuestro equipo</span>
+        <h1 className="mt-6 text-4xl font-semibold md:text-5xl">Expertos que acompañan cada decisión</h1>
+        <p className="mt-4 text-base text-brand-slate/80">
+          Conoce al equipo multidisciplinar que ha convertido a Legaic en referencia en derecho civil, familia e inmobiliario.
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {abogados && abogados.length > 0 ? (
           abogados.map((abogado) => (
             <Link
               key={abogado._id}
               href={`/abogados/${abogado.slug}`}
-              className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group"
+              className="card-surface group flex h-full flex-col overflow-hidden"
             >
               {abogado.profileImage && (
-                <div className="overflow-hidden">
+                <div className="relative h-72 overflow-hidden">
                   <Image
-                    src={urlFor(abogado.profileImage).width(400).height(400).url()}
+                    src={urlFor(abogado.profileImage).width(400).height(500).url()}
                     alt={`Foto de ${abogado.name}`}
                     width={400}
-                    height={400}
-                    className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-300"
+                    height={500}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-night/70 via-brand-night/40 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 </div>
               )}
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-1">
-                  {abogado.name}
-                </h3>
+              <div className="flex flex-1 flex-col gap-3 p-8">
+                <h3 className="text-2xl font-semibold text-brand-navy">{abogado.name}</h3>
                 {abogado.position && (
-                  <p className="text-blue-800 font-medium">{abogado.position}</p>
+                  <p className="text-sm font-medium uppercase tracking-[0.25em] text-brand-primary">
+                    {abogado.position}
+                  </p>
                 )}
+                <span className="mt-auto inline-flex items-center text-sm font-semibold uppercase tracking-[0.22em] text-brand-primary transition-colors group-hover:text-brand-accent">
+                  Ver perfil
+                </span>
               </div>
             </Link>
           ))
         ) : (
-          <p>No se encontraron perfiles de abogados.</p>
+          <p className="col-span-full text-center text-brand-slate/70">No se encontraron perfiles de abogados.</p>
         )}
       </div>
     </main>
   )
 }
 
-// --- Configuración de Revalidación ---
 export const revalidate = 0

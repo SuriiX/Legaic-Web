@@ -1,13 +1,13 @@
 // src/app/noticias/page.tsx
 
-import React from 'react' // Necesario para los tipos de estilo
-import { client } from '@/lib/sanity.client'
-import { groq } from 'next-sanity'
-import Image from 'next/image'
 import Link from 'next/link'
+import Image from 'next/image'
+import { groq } from 'next-sanity'
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
+
+import { client } from '@/lib/sanity.client'
 import { urlFor } from '@/lib/sanity.image'
 
-// --- Consulta GROQ (sin cambios) ---
 const query = groq`*[_type == "post"] | order(publishedAt desc){
   _id,
   title,
@@ -17,71 +17,75 @@ const query = groq`*[_type == "post"] | order(publishedAt desc){
   "slug": slug.current
 }`
 
-// --- Definición de Tipos (sin cambios) ---
 interface Post {
   _id: string
   title: string
   slug: string
   summary?: string
-  mainImage?: any
+  mainImage?: SanityImageSource | null
   publishedAt: string
 }
 
-// --- Función para Obtener Datos (sin cambios) ---
 async function getPosts() {
   const posts = await client.fetch(query)
   return posts as Post[]
 }
 
-// --- Componente de la Página (Actualizado con Tailwind) ---
 export default async function NoticiasPage() {
   const posts = await getPosts()
 
   return (
-    <main className="container mx-auto px-4 py-12 md:py-20 max-w-4xl">
-      <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4 text-center">
-        Noticias y Artículos
-      </h1>
-      <p className="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-12">
-        Artículos y actualidad del despacho.
-      </p>
+    <main className="container max-w-4xl py-16 md:py-24">
+      <div className="mx-auto max-w-3xl text-center">
+        <span className="badge-accent">Actualidad</span>
+        <h1 className="mt-6 text-4xl font-semibold md:text-5xl">Noticias y artículos</h1>
+        <p className="mt-4 text-base text-brand-slate/80">
+          Análisis de casos, jurisprudencia relevante y novedades que impactan a nuestros clientes.
+        </p>
+      </div>
 
-      <div className="space-y-8">
+      <div className="mt-16 space-y-8">
         {posts && posts.length > 0 ? (
           posts.map((post) => (
             <Link
               key={post._id}
               href={`/noticias/${post.slug}`}
-              className="flex flex-col md:flex-row items-center bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group"
+              className="card-surface group flex flex-col overflow-hidden md:flex-row"
             >
               {post.mainImage && (
-                <div className="flex-shrink-0 w-full md:w-64">
+                <div className="relative w-full md:w-72">
                   <Image
-                    src={urlFor(post.mainImage).width(300).height(200).url()}
+                    src={urlFor(post.mainImage).width(480).height(360).url()}
                     alt={`Imagen para ${post.title}`}
-                    width={300}
-                    height={200}
-                    className="w-full h-48 md:h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    width={480}
+                    height={360}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-night/70 via-brand-night/40 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 </div>
               )}
-              <div className="p-6 flex-grow">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2 group-hover:text-blue-800">
-                  {post.title}
-                </h3>
-                <p className="text-sm text-gray-500 mb-3">
-                  {new Date(post.publishedAt).toLocaleDateString('es-ES', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  })}
-                </p>
-                <p className="text-gray-600 text-sm">{post.summary}</p>
+              <div className="flex flex-1 flex-col justify-between gap-4 p-8">
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.35em] text-brand-primary/70">
+                    {new Date(post.publishedAt).toLocaleDateString('es-ES', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                  </p>
+                  <h3 className="text-2xl font-semibold text-brand-navy transition-colors group-hover:text-brand-accent">
+                    {post.title}
+                  </h3>
+                  {post.summary && <p className="text-sm text-brand-slate/80">{post.summary}</p>}
+                </div>
+                <span className="inline-flex items-center text-sm font-semibold uppercase tracking-[0.22em] text-brand-primary transition-colors group-hover:text-brand-accent">
+                  Leer artículo
+                </span>
               </div>
             </Link>
           ))
         ) : (
-          <p className="text-center text-gray-500">No se encontraron noticias.</p>
+          <p className="text-center text-brand-slate/70">No se encontraron noticias.</p>
         )}
       </div>
     </main>
