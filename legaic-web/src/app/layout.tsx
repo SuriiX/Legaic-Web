@@ -2,17 +2,16 @@
 
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import './globals.css' // Aquí se importan los estilos de Tailwind
+import './globals.css'
 
-// 1. Importar los nuevos componentes
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Legaic Abogados - Despacho en Barcelona',
-  description: 'Migración a Next.js y Sanity',
+  title: 'Legaic Abogados - Boutique legal en Barcelona',
+  description: 'Despacho jurídico especializado en derecho civil, familia e inmobiliario.',
 }
 
 export default function RootLayout({
@@ -22,19 +21,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className={inter.className}>
-        
-        {/* 2. Añadir el Header aquí */}
+      <body className={`${inter.className} flex min-h-screen flex-col bg-brand-cloud`}> 
         <Header />
-
-        {}
-        <main>
-          {children}
-        </main>
-
-        {/* 3. Añadir el Footer aquí */}
+        <main className="flex-1">{children}</main>
         <Footer />
-
       </body>
     </html>
   )

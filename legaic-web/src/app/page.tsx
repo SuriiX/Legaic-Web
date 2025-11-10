@@ -1,12 +1,13 @@
 // src/app/page.tsx
 
-import { client } from '@/lib/sanity.client'
-import { groq } from 'next-sanity'
 import Link from 'next/link'
-import Image from 'next/image' // Necesitamos Image
-import { urlFor } from '@/lib/sanity.image' // Y nuestro helper de imagen
+import Image from 'next/image'
+import { groq } from 'next-sanity'
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
 
-// 1. Consulta GROQ actualizada para traer más datos para las tarjetas
+import { client } from '@/lib/sanity.client'
+import { urlFor } from '@/lib/sanity.image'
+
 const query = groq`*[_type == "areaDePractica"]{
   _id,
   title,
@@ -15,94 +16,115 @@ const query = groq`*[_type == "areaDePractica"]{
   summary
 }`
 
-// 2. Interfaz actualizada
 interface Area {
   _id: string
   title: string
   slug: string
-  mainImage?: any // 'any' por simplicidad
+  mainImage?: SanityImageSource | null
   summary?: string
 }
 
-// 3. Función de Fetch (sin cambios)
 async function getAreasDePractica() {
   const areas: Area[] = await client.fetch(query)
   return areas
 }
 
-// 4. Componente de Página (ahora con Tailwind)
 export default async function Home() {
   const areas = await getAreasDePractica()
 
   return (
-    <main>
-      
-      {/* --- Hero Section --- */}
-      <section className="bg-white py-24 md:py-32">
-        <div className="container mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-4">
-            Tu boutique legal en Barcelona
-          </h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
-            Con más de 40 años de experiencia, ofrecemos un servicio legal experto y
-            cercano en derecho civil, familia e inmobiliario.
-          </p>
-          <Link
-            href="/contacto" // Asumiendo que esta página existirá
-            className="bg-blue-800 text-white px-8 py-3 rounded-md text-lg font-medium hover:bg-blue-900 transition-colors"
-          >
-            Contacta con Nosotros
-          </Link>
+    <main className="space-y-24 pb-24">
+      <section className="relative overflow-hidden bg-brand-hero text-white">
+        <div className="absolute inset-0 opacity-20">
+          <Image
+            src="/globe.svg"
+            alt="Trama decorativa"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
+        <div className="relative container py-24 md:py-32">
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="inline-flex items-center justify-center rounded-full border border-white/30 px-4 py-1 text-xs font-medium uppercase tracking-[0.25em] text-white/80">
+              Boutique legal en Barcelona
+            </span>
+            <h1 className="mt-6 text-4xl font-semibold leading-tight md:text-6xl">
+              Tu aliado jurídico en derecho civil, familia e inmobiliario
+            </h1>
+            <p className="mt-6 text-lg text-white/80 md:text-xl">
+              Más de cuatro décadas acompañando a empresas y particulares con soluciones jurídicas de alto nivel y un trato humano cercano.
+            </p>
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+              <Link
+                href="/contacto"
+                className="inline-flex items-center rounded-full bg-brand-accent px-8 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-brand-night transition-colors duration-300 hover:bg-brand-accentDark hover:text-white"
+              >
+                Contacta con nosotros
+              </Link>
+              <Link
+                href="/#areas-de-practica"
+                className="inline-flex items-center rounded-full border border-white/50 px-8 py-3 text-sm font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-white/10"
+              >
+                Conoce nuestras áreas
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* --- Sección de Áreas de Práctica --- */}
-      <section className="bg-gray-50 py-20">
-        <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">
-            Áreas de Práctica
+      <section id="areas-de-practica" className="container">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="badge-accent">Especialidades</span>
+          <h2 className="mt-6 text-3xl font-semibold md:text-4xl">
+            Áreas de práctica
           </h2>
+          <p className="mt-4 text-base text-brand-slate/80">
+            Un equipo multidisciplinar para ofrecerte asesoramiento integral con la excelencia y cercanía que caracteriza a Legaic.
+          </p>
+        </div>
 
-          {/* 5. Reemplazamos <ul> por un grid de Tailwind */}
-          {areas && areas.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              
-              {areas.map((area) => (
-                <Link
-                  key={area._id}
-                  href={`/areas-de-practica/${area.slug}`}
-                  className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
-                >
-                  {area.mainImage && (
+        {areas && areas.length > 0 ? (
+          <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {areas.map((area) => (
+              <Link
+                key={area._id}
+                href={`/areas-de-practica/${area.slug}`}
+                className="card-surface group flex h-full flex-col overflow-hidden"
+              >
+                {area.mainImage && (
+                  <div className="relative h-48 overflow-hidden">
                     <Image
                       src={urlFor(area.mainImage).width(600).height(400).url()}
                       alt={`Imagen para ${area.title}`}
                       width={600}
                       height={400}
-                      className="w-full h-48 object-cover" // Clases de Tailwind para la imagen
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                  )}
-                  
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                      {area.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm">{area.summary}</p>
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-night/70 via-brand-night/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                   </div>
-                </Link>
-              ))}
-
-            </div>
-          ) : (
-            <p className="text-center text-gray-500">
-              No se encontraron áreas de práctica.
-            </p>
-          )}
-        </div>
+                )}
+                <div className="flex flex-1 flex-col gap-4 p-8">
+                  <h3 className="text-2xl font-semibold text-brand-navy">{area.title}</h3>
+                  {area.summary && (
+                    <p className="text-sm text-brand-slate/80">{area.summary}</p>
+                  )}
+                  <span className="mt-auto inline-flex items-center text-sm font-semibold uppercase tracking-[0.22em] text-brand-primary transition-colors group-hover:text-brand-accent">
+                    Ver detalle
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-12 text-center text-brand-slate/70">
+            No se encontraron áreas de práctica por el momento.
+          </p>
+        )}
       </section>
     </main>
   )
 }
 
-// 6. Revalidación
 export const revalidate = 0
