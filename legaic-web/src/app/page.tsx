@@ -1,4 +1,4 @@
-// src/app/page.tsx
+
 
 import { client } from '@/lib/sanity.client'
 import { groq } from 'next-sanity'
