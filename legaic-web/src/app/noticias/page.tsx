@@ -1,13 +1,13 @@
 // src/app/noticias/page.tsx
 
-import React from 'react'
+import React from 'react' // Necesario para los tipos de estilo
 import { client } from '@/lib/sanity.client'
 import { groq } from 'next-sanity'
 import Image from 'next/image'
 import Link from 'next/link'
 import { urlFor } from '@/lib/sanity.image'
 
-// --- Consulta GROQ ---
+// --- Consulta GROQ (sin cambios) ---
 const query = groq`*[_type == "post"] | order(publishedAt desc){
   _id,
   title,
@@ -17,7 +17,7 @@ const query = groq`*[_type == "post"] | order(publishedAt desc){
   "slug": slug.current
 }`
 
-// --- Definición de Tipos ---
+// --- Definición de Tipos (sin cambios) ---
 interface Post {
   _id: string
   title: string
@@ -27,75 +27,61 @@ interface Post {
   publishedAt: string
 }
 
-// --- Función para Obtener Datos ---
+// --- Función para Obtener Datos (sin cambios) ---
 async function getPosts() {
   const posts = await client.fetch(query)
   return posts as Post[]
 }
 
-// --- Estilos (temporales) ---
-const styles = {
-  page: { padding: '2rem', maxWidth: '1000px', margin: '0 auto' } as React.CSSProperties,
-  card: {
-    display: 'flex',
-    gap: '2rem',
-    border: '1px solid #eee',
-    borderRadius: '8px',
-    padding: '1rem',
-    textDecoration: 'none',
-    color: 'black',
-    marginBottom: '1.5rem',
-  } as React.CSSProperties,
-  image: {
-    width: '200px',
-    height: '150px',
-    objectFit: 'cover',
-    borderRadius: '4px',
-    flexShrink: 0,
-  } as React.CSSProperties,
-  content: { display: 'flex', flexDirection: 'column' } as React.CSSProperties,
-  title: { marginTop: 0, fontSize: '1.5rem' },
-  date: { color: '#777', fontSize: '0.9rem' },
-  summary: { color: '#333' },
-}
-
-// --- Componente de la Página ---
+// --- Componente de la Página (Actualizado con Tailwind) ---
 export default async function NoticiasPage() {
   const posts = await getPosts()
 
   return (
-    <main style={styles.page}>
-      <h1>Noticias</h1>
-      <p>Artículos y actualidad del despacho.</p>
+    <main className="container mx-auto px-4 py-12 md:py-20 max-w-4xl">
+      <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4 text-center">
+        Noticias y Artículos
+      </h1>
+      <p className="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-12">
+        Artículos y actualidad del despacho.
+      </p>
 
-      <div style={{ marginTop: '3rem' }}>
+      <div className="space-y-8">
         {posts && posts.length > 0 ? (
           posts.map((post) => (
-            <Link key={post._id} href={`/noticias/${post.slug}`} style={styles.card}>
+            <Link
+              key={post._id}
+              href={`/noticias/${post.slug}`}
+              className="flex flex-col md:flex-row items-center bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group"
+            >
               {post.mainImage && (
-                <Image
-                  src={urlFor(post.mainImage).width(200).height(150).url()}
-                  alt={`Imagen para ${post.title}`}
-                  width={200}
-                  height={150}
-                  style={styles.image}
-                />
+                <div className="flex-shrink-0 w-full md:w-64">
+                  <Image
+                    src={urlFor(post.mainImage).width(300).height(200).url()}
+                    alt={`Imagen para ${post.title}`}
+                    width={300}
+                    height={200}
+                    className="w-full h-48 md:h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
               )}
-              <div style={styles.content}>
-                <h3 style={styles.title}>{post.title}</h3>
-                <p style={styles.date}>
+              <div className="p-6 flex-grow">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2 group-hover:text-blue-800">
+                  {post.title}
+                </h3>
+                <p className="text-sm text-gray-500 mb-3">
                   {new Date(post.publishedAt).toLocaleDateString('es-ES', {
                     day: 'numeric',
                     month: 'long',
                     year: 'numeric',
                   })}
                 </p>
-                <p style={styles.summary}>{post.summary}</p>
+                <p className="text-gray-600 text-sm">{post.summary}</p>
               </div>
             </Link>
           ))
         ) : (
-          <p>No se encontraron noticias.</p>
+          <p className="text-center text-gray-500">No se encontraron noticias.</p>
         )}
       </div>
     </main>

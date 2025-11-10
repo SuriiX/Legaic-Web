@@ -1,13 +1,13 @@
 // src/app/quienes-somos/page.tsx
 
-import React from 'react' // <-- 1. IMPORTANTE: Importar React
+// Eliminamos 'import React' que ya no es necesario para los estilos
 import { client } from '@/lib/sanity.client'
 import { groq } from 'next-sanity'
 import Image from 'next/image'
 import Link from 'next/link'
 import { urlFor } from '@/lib/sanity.image'
 
-// --- Consulta GROQ ---
+// --- Consulta GROQ (sin cambios) ---
 const query = groq`*[_type == "abogado"]{
   _id,
   name,
@@ -16,7 +16,7 @@ const query = groq`*[_type == "abogado"]{
   "slug": slug.current
 }`
 
-// --- Definición de Tipos ---
+// --- Definición de Tipos (sin cambios) ---
 interface Abogado {
   _id: string
   name: string
@@ -25,76 +25,52 @@ interface Abogado {
   profileImage?: any
 }
 
-// --- Función para Obtener Datos ---
+// --- Función para Obtener Datos (sin cambios) ---
 async function getAbogados() {
   const abogados = await client.fetch(query)
   return abogados as Abogado[]
 }
 
-// --- Estilos CSS (Inline) ---
-// 
-// ==========================================================
-// AQUÍ ESTÁ LA CORRECCIÓN:
-// Añadimos 'as React.CSSProperties' para asegurar el tipo correcto
-// ==========================================================
-//
-const styles = {
-  page: { padding: '2rem', maxWidth: '1000px', margin: '0 auto' } as React.CSSProperties,
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-    gap: '2rem',
-    marginTop: '2rem',
-  } as React.CSSProperties,
-  card: {
-    border: '1px solid #eee',
-    borderRadius: '8px',
-    padding: '1rem',
-    textDecoration: 'none',
-    color: 'black',
-    transition: 'box-shadow 0.2s',
-  } as React.CSSProperties,
-  image: {
-    width: '100%',
-    height: '250px',
-    objectFit: 'cover', // Esta propiedad causaba el error
-    borderRadius: '4px',
-  } as React.CSSProperties, // El 'as' soluciona el error de tipo
-  name: { marginTop: '1rem', fontSize: '1.25rem' } as React.CSSProperties,
-  position: { color: '#555', fontStyle: 'italic' } as React.CSSProperties,
-}
-
-// --- Componente de la Página ---
+// --- Componente de la Página (Actualizado con Tailwind) ---
 export default async function QuienesSomosPage() {
-  
   const abogados = await getAbogados()
 
   return (
-    <main style={styles.page}>
-      <h1>Nuestro Equipo</h1>
-      <p>Conoce al equipo de Legaic Abogados.</p>
+    <main className="container mx-auto px-4 py-12 md:py-20 max-w-6xl">
+      <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4 text-center">
+        Nuestro Equipo
+      </h1>
+      <p className="text-lg text-gray-600 text-center max-w-3xl mx-auto mb-12">
+        Conoce al equipo de Legaic Abogados.
+      </p>
 
-      <div style={styles.grid}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {abogados && abogados.length > 0 ? (
           abogados.map((abogado) => (
             <Link
               key={abogado._id}
               href={`/abogados/${abogado.slug}`}
-              style={styles.card}
+              className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group"
             >
               {abogado.profileImage && (
-                <Image
-                  src={urlFor(abogado.profileImage).width(300).height(300).url()}
-                  alt={`Foto de ${abogado.name}`}
-                  width={300}
-                  height={300}
-                  style={styles.image}
-                />
+                <div className="overflow-hidden">
+                  <Image
+                    src={urlFor(abogado.profileImage).width(400).height(400).url()}
+                    alt={`Foto de ${abogado.name}`}
+                    width={400}
+                    height={400}
+                    className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
               )}
-              <h3 style={styles.name}>{abogado.name}</h3>
-              {abogado.position && (
-                <p style={styles.position}>{abogado.position}</p>
-              )}
+              <div className="p-6">
+                <h3 className="text-xl font-semibold text-gray-800 mb-1">
+                  {abogado.name}
+                </h3>
+                {abogado.position && (
+                  <p className="text-blue-800 font-medium">{abogado.position}</p>
+                )}
+              </div>
             </Link>
           ))
         ) : (

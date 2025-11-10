@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { PortableText } from '@portabletext/react'
 import { urlFor } from '@/lib/sanity.image'
 
-// --- Consulta GROQ ---
+// --- Consulta GROQ (sin cambios) ---
 const query = groq`*[_type == "post" && slug.current == $slug][0]{
   _id,
   title,
@@ -16,7 +16,7 @@ const query = groq`*[_type == "post" && slug.current == $slug][0]{
   "slug": slug.current
 }`
 
-// --- Definición de Tipos ---
+// --- Definición de Tipos (sin cambios) ---
 interface Post {
   _id: string
   title: string
@@ -32,13 +32,13 @@ interface PageProps {
   }
 }
 
-// --- Función para Obtener Datos ---
+// --- Función para Obtener Datos (sin cambios) ---
 async function getPost(slug: string) {
   const post = await client.fetch(query, { slug })
   return post as Post
 }
 
-// --- Componente de la Página ---
+// --- Componente de la Página (Actualizado con Tailwind) ---
 export default async function PostPage(props: PageProps) {
   const { slug } = await props.params
 
@@ -53,9 +53,13 @@ export default async function PostPage(props: PageProps) {
   }
 
   return (
-    <article style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>{post.title}</h1>
-      <p style={{ color: '#777', fontSize: '0.9rem' }}>
+    <article className="container mx-auto px-4 py-12 md:py-20 max-w-3xl">
+      
+      {/* --- Encabezado del Artículo --- */}
+      <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4">
+        {post.title}
+      </h1>
+      <p className="text-gray-500 mb-8">
         Publicado el: {new Date(post.publishedAt).toLocaleDateString('es-ES', {
           day: 'numeric',
           month: 'long',
@@ -63,19 +67,22 @@ export default async function PostPage(props: PageProps) {
         })}
       </p>
 
+      {/* --- Imagen Principal --- */}
       {post.mainImage && (
-        <Image
-          src={urlFor(post.mainImage).width(800).height(400).url()}
-          alt={`Imagen para ${post.title}`}
-          width={800}
-          height={400}
-          priority
-          style={{ objectFit: 'cover', margin: '2rem 0' }}
-        />
+        <div className="mb-8 overflow-hidden rounded-lg shadow-lg">
+          <Image
+            src={urlFor(post.mainImage).width(1200).height(600).url()}
+            alt={`Imagen para ${post.title}`}
+            width={1200}
+            height={600}
+            priority
+            className="w-full h-auto object-cover"
+          />
+        </div>
       )}
 
-      {/* Aquí renderizamos el 'body' del artículo */}
-      <div style={{ lineHeight: '1.7' }}>
+      {/* --- Cuerpo del Artículo (con 'prose') --- */}
+      <div className="prose prose-lg max-w-none">
         <PortableText value={post.body} />
       </div>
     </article>
