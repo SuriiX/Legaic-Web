@@ -9,9 +9,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "brand-cloud": "#F0F8FF", // <-- Reemplaza esto con tu valor real
 
-        "brand-slate": "#708090", // <-- Añade esta línea y reemplaza el valor
+        "brand-cloud": "#F0F8FF", 
+        "brand-slate": "#708090", 
+        "brand-accent": "#FFD700", 
       },
     },
   },
