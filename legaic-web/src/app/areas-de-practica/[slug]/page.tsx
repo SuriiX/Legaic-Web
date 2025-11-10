@@ -1,19 +1,13 @@
-// src/app/areas-de-practica/[slug]/page.tsx
+import Image from 'next/image'
+import { notFound } from 'next/navigation'
+import { groq } from 'next-sanity'
+import { PortableText } from '@portabletext/react'
+import type { SanityImageSource } from '@sanity/image-url'
+import type { PortableTextBlock } from 'sanity'
 
 import { client } from '@/lib/sanity.client'
-import { groq } from 'next-sanity'
-import Image from 'next/image'
-import { PortableText } from '@portabletext/react'
-import imageUrlBuilder from '@sanity/image-url'
+import { urlFor } from '@/lib/sanity.image'
 
-// --- Configuración de Imagen ---
-const builder = imageUrlBuilder(client)
-function urlFor(source: any) {
-  return builder.image(source)
-}
-
-// --- Consulta GROQ ---
-// Esta consulta espera un parámetro llamado $slug
 const query = groq`*[_type == "areaDePractica" && slug.current == $slug][0]{
   _id,
   title,
@@ -22,81 +16,62 @@ const query = groq`*[_type == "areaDePractica" && slug.current == $slug][0]{
   content
 }`
 
-// --- Definición de Tipos (TypeScript) ---
 interface AreaDePractica {
   _id: string
   title: string
   slug: string
-  mainImage?: any
-  content: any[]
+  mainImage?: SanityImageSource
+  content?: PortableTextBlock[]
 }
 
-// Definición de Props para la página
 interface PageProps {
   params: {
     slug: string
   }
 }
 
-// --- Función para Obtener Datos ---
-// Esta función RECIBE el slug y se lo PASA a client.fetch
 async function getArea(slug: string) {
-  // Pasamos el slug como un objeto de parámetros.
-  // Esto soluciona el error "param $slug referenced, but not provided"
-  const area = await client.fetch(query, { slug })
-  return area as AreaDePractica
+  return client.fetch<AreaDePractica | null>(query, { slug })
 }
 
-// --- Componente de la Página ---
-// 
-// ==========================================================
-// AQUÍ ESTÁN LAS CORRECCIONES:
-// 1. Cambiamos ({ params }: PageProps) por (props: PageProps)
-// 2. Usamos 'await props.params' para desenvolver la Promesa
-// ==========================================================
-//
-export default async function AreaDePracticaPage(props: PageProps) {
-  
-  // 1. "Esperamos" la promesa de los params y extraemos el slug
-  const { slug } = await props.params
+export default async function AreaDePracticaPage({ params }: PageProps) {
+  const { slug } = params
 
-  // 2. Manejo de seguridad por si el slug no viniera
   if (!slug) {
-    return <div>Cargando...</div>
+    notFound()
   }
 
-  // 3. Pasamos el slug (que ahora sí tiene valor) a la función
   const area = await getArea(slug)
 
-  // 4. Manejo de "No Encontrado"
   if (!area) {
-    return <div>Área no encontrada</div>
+    notFound()
   }
 
-  // 5. Renderizar la página
   return (
-    <article style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>{area.title}</h1>
-      <hr />
+    <article className="container mx-auto px-6 py-12 md:py-20 max-w-3xl">
+      <header className="mb-8">
+        <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4">{area.title}</h1>
+        <div className="h-1 w-20 bg-blue-800" />
+      </header>
 
-      {area.mainImage && (
-        <Image
-          src={urlFor(area.mainImage).width(800).height(400).url()}
-          alt={`Imagen para ${area.title}`}
-          width={800}
-          height={400}
-          priority // Cargar esta imagen con prioridad
-          style={{ objectFit: 'cover' }}
-        />
-      )}
+      {area.mainImage ? (
+        <div className="mb-10 overflow-hidden rounded-lg shadow-lg">
+          <Image
+            src={urlFor(area.mainImage).width(1200).height(600).url()}
+            alt={area.title}
+            width={1200}
+            height={600}
+            className="w-full h-auto object-cover"
+            priority
+          />
+        </div>
+      ) : null}
 
-      <div style={{ marginTop: '2rem' }}>
-        <PortableText value={area.content} />
+      <div className="prose prose-lg max-w-none">
+        <PortableText value={area.content || []} />
       </div>
     </article>
   )
 }
 
-// --- Configuración de Revalidación ---
-// Forzar Server-Side Rendering (SSR) para ver cambios al instante
 export const revalidate = 0

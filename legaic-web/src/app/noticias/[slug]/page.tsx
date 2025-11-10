@@ -1,12 +1,13 @@
-// src/app/noticias/[slug]/page.tsx
+import Image from 'next/image'
+import { notFound } from 'next/navigation'
+import { groq } from 'next-sanity'
+import { PortableText } from '@portabletext/react'
+import type { SanityImageSource } from '@sanity/image-url'
+import type { PortableTextBlock } from 'sanity'
 
 import { client } from '@/lib/sanity.client'
-import { groq } from 'next-sanity'
-import Image from 'next/image'
-import { PortableText } from '@portabletext/react'
 import { urlFor } from '@/lib/sanity.image'
 
-// --- Consulta GROQ (sin cambios) ---
 const query = groq`*[_type == "post" && slug.current == $slug][0]{
   _id,
   title,
@@ -16,14 +17,13 @@ const query = groq`*[_type == "post" && slug.current == $slug][0]{
   "slug": slug.current
 }`
 
-// --- Definición de Tipos (sin cambios) ---
 interface Post {
   _id: string
   title: string
   slug: string
-  mainImage?: any
-  publishedAt: string
-  body: any[]
+  mainImage?: SanityImageSource
+  publishedAt?: string
+  body?: PortableTextBlock[]
 }
 
 interface PageProps {
@@ -32,58 +32,54 @@ interface PageProps {
   }
 }
 
-// --- Función para Obtener Datos (sin cambios) ---
 async function getPost(slug: string) {
-  const post = await client.fetch(query, { slug })
-  return post as Post
+  return client.fetch<Post | null>(query, { slug })
 }
 
-// --- Componente de la Página (Actualizado con Tailwind) ---
-export default async function PostPage(props: PageProps) {
-  const { slug } = await props.params
+export default async function PostPage({ params }: PageProps) {
+  const { slug } = params
 
   if (!slug) {
-    return <div>Cargando...</div>
+    notFound()
   }
 
   const post = await getPost(slug)
 
   if (!post) {
-    return <div>Artículo no encontrado</div>
+    notFound()
   }
 
   return (
-    <article className="container mx-auto px-4 py-12 md:py-20 max-w-3xl">
-      
-      {/* --- Encabezado del Artículo --- */}
-      <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4">
-        {post.title}
-      </h1>
-      <p className="text-gray-500 mb-8">
-        Publicado el: {new Date(post.publishedAt).toLocaleDateString('es-ES', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        })}
-      </p>
+    <article className="container mx-auto px-6 py-12 md:py-20 max-w-3xl">
+      <header className="mb-8">
+        <h1 className="text-3xl md:text-5xl font-bold text-gray-800 mb-4">{post.title}</h1>
+        {post.publishedAt ? (
+          <p className="text-gray-500">
+            Publicado el{' '}
+            {new Date(post.publishedAt).toLocaleDateString('es-ES', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })}
+          </p>
+        ) : null}
+      </header>
 
-      {/* --- Imagen Principal --- */}
-      {post.mainImage && (
-        <div className="mb-8 overflow-hidden rounded-lg shadow-lg">
+      {post.mainImage ? (
+        <div className="mb-10 overflow-hidden rounded-lg shadow-lg">
           <Image
             src={urlFor(post.mainImage).width(1200).height(600).url()}
-            alt={`Imagen para ${post.title}`}
+            alt={post.title}
             width={1200}
             height={600}
-            priority
             className="w-full h-auto object-cover"
+            priority
           />
         </div>
-      )}
+      ) : null}
 
-      {/* --- Cuerpo del Artículo (con 'prose') --- */}
       <div className="prose prose-lg max-w-none">
-        <PortableText value={post.body} />
+        <PortableText value={post.body || []} />
       </div>
     </article>
   )

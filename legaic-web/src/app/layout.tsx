@@ -1,12 +1,11 @@
-// src/app/layout.tsx
-
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import './globals.css' // Aquí se importan los estilos de Tailwind
+import './globals.css'
 
-// 1. Importar los nuevos componentes
-import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import Header from '@/components/Header'
+import { client } from '@/lib/sanity.client'
+import { siteSettingsQuery, type SiteSettings } from '@/lib/sanity.queries'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,26 +14,21 @@ export const metadata: Metadata = {
   description: 'Migración a Next.js y Sanity',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const settings = await client.fetch<SiteSettings | null>(siteSettingsQuery)
+
   return (
     <html lang="es">
       <body className={inter.className}>
-        
-        {/* 2. Añadir el Header aquí */}
-        <Header />
+        <Header settings={settings ?? undefined} />
 
-        {}
-        <main>
-          {children}
-        </main>
+        <main>{children}</main>
 
-        {/* 3. Añadir el Footer aquí */}
-        <Footer />
-
+        <Footer settings={settings ?? undefined} />
       </body>
     </html>
   )
