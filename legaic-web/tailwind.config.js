@@ -9,11 +9,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-
-        "brand-cloud": "#F0F8FF", 
-        "brand-slate": "#708090", 
-        "brand-accent": "#FFD700", 
+        // Aquí definimos toda tu paleta de colores "brand"
+        brand: {
+          cloud: "#F0F8FF", // <-- ¡Reemplaza por tu valor real!
+          slate: "#708090", // <-- ¡Reemplaza por tu valor real!
+          accent: "#FFD700", // <-- ¡Reemplaza por tu valor real!
+          navy: "#000080", // <-- ¡Reemplaza por tu valor real!
+          primary: "#007BFF", // <-- ¡Reemplaza por tu valor real!
+        },
       },
+
     },
   },
   plugins: [require("@tailwindcss/typography")],

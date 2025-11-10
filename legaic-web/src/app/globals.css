@@ -5,20 +5,35 @@
 @layer base {
   :root {
     color-scheme: light;
-    background-color: theme('colors.brand.cloud');
+    /* Esto ahora funcionará porque 'colors.brand.cloud' existe en el config */
+    background-color: theme("colors.brand.cloud");
   }
 
   body {
-    @apply bg-brand-cloud text-brand-slate antialiased; 
-    background-image: radial-gradient(circle at top left, rgba(200, 161, 86, 0.08), transparent 45%),
-      radial-gradient(circle at bottom right, rgba(10, 34, 59, 0.12), transparent 50%);
+    /* Esto ahora funcionará porque 'bg-brand-cloud' y 'text-brand-slate' existirán */
+    @apply bg-brand-cloud text-brand-slate antialiased;
+    background-image: radial-gradient(
+        circle at top left,
+        rgba(200, 161, 86, 0.08),
+        transparent 45%
+      ),
+      radial-gradient(
+        circle at bottom right,
+        rgba(10, 34, 59, 0.12),
+        transparent 50%
+      );
   }
 
   ::selection {
     @apply bg-brand-accent text-white;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply text-brand-navy font-semibold;
   }
 }
