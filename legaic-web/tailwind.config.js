@@ -7,9 +7,12 @@ module.exports = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        // <-- Añade esta sección de "colors"
+        "brand-cloud": "#F0F8FF", // <-- Reemplaza esto con tu valor de color real
+      },
+    },
   },
-  plugins: [
-    require("@tailwindcss/typography"),
-  ],
+  plugins: [require("@tailwindcss/typography")],
 };
